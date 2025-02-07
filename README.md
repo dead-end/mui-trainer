@@ -11,6 +11,14 @@
 ✔ Select a variant: › TypeScript
 ```
 
+### Dependencies
+
+```sh
+npm i react-router
+npm install @mui/material @emotion/react @emotion/styled
+npm install @mui/icons-material
+```
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
