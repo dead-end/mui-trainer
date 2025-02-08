@@ -19,6 +19,24 @@ npm install @mui/material @emotion/react @emotion/styled
 npm install @mui/icons-material
 ```
 
+## GH Pages
+
+Install
+
+```bash
+npm install gh-pages --save-dev
+```
+
+Add to file: `package.json`
+
+```
+"deploy": "node ./gh-pages.js"
+```
+
+Add file: `static/.nojekyll`
+
+Add file: `gh-pages.js`
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

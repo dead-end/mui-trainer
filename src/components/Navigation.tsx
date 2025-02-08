@@ -14,10 +14,10 @@ const Navigation = () => {
           <Typography variant='h6' sx={{ flexGrow: 1 }}>
             Mui Trainer
           </Typography>
-          <Button component={Link} to='/' color='inherit'>
+          <Button component={Link} to='/trainer' color='inherit'>
             <Home />
           </Button>
-          <Button component={Link} to='/admin' color='inherit'>
+          <Button component={Link} to='/trainer/admin' color='inherit'>
             Admin
           </Button>
         </Toolbar>

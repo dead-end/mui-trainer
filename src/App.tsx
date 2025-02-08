@@ -16,8 +16,10 @@ function App() {
           <BrowserRouter>
             <Navigation />
             <Routes>
-              <Route index element={<Home />} />
-              <Route path='admin' element={<Admin />} />
+              <Route path='trainer'>
+                <Route index element={<Home />} />
+                <Route path='admin' element={<Admin />} />
+              </Route>
             </Routes>
           </BrowserRouter>
         ) : (
