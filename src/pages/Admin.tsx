@@ -1,4 +1,5 @@
-import { Typography } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import Stack from '@mui/material/Stack';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
@@ -26,7 +27,6 @@ export const Admin = () => {
     validateEmpty(repo, setRepoError);
     validateEmpty(token, setTokenError);
 
-    console.log('user', user, 'repo', repo, 'token', token);
     setConfig({
       user: user,
       repo: repo,
@@ -40,10 +40,9 @@ export const Admin = () => {
         noValidate
         component='form'
         onSubmit={handleSubmit}
-        sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+        sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}
       >
         <Typography variant='h6'>Github Configuration</Typography>
-
         <TextField
           label='User'
           name='user'
@@ -80,9 +79,11 @@ export const Admin = () => {
           required
           fullWidth
         />
-        <Button type='submit' variant='contained'>
-          Submit
-        </Button>
+        <Stack direction={'row'}>
+          <Button type='submit' variant='contained'>
+            Submit
+          </Button>
+        </Stack>
       </Box>
     </Paper>
   );
