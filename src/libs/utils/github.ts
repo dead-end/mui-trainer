@@ -1,4 +1,4 @@
-import type { ContentHash } from './interfaces';
+import { TContentHash } from '../types';
 import Result from './result';
 
 /**
@@ -24,6 +24,10 @@ interface GithubPutBody {
   message: string;
   sha?: string;
 }
+
+export const githubGetUrl = (user: string, repo: string, path: string) => {
+  return `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
+};
 
 /**
  * The function writes a string to a githup file. If the file exists, then a
@@ -76,7 +80,7 @@ export const githubWriteContent = async (
  * The function reads a file from github. A token can be given optionally.
  */
 export const githubReadContent = async (url: string, token: string) => {
-  const result = new Result<ContentHash>();
+  const result = new Result<TContentHash>();
 
   try {
     const headers: any = {
