@@ -5,6 +5,8 @@ import { Admin } from './pages/Admin';
 import Navigation from './components/Navigation';
 import Container from '@mui/material/Container';
 import { useConfig } from './libs/hooks/useConfig';
+import BookList from './pages/book/BookList';
+import BookCreate from './pages/book/BookCreate';
 
 function App() {
   const config = useConfig();
@@ -19,6 +21,8 @@ function App() {
               <Route path='trainer'>
                 <Route index element={<Home />} />
                 <Route path='admin' element={<Admin />} />
+                <Route path='books/create' element={<BookCreate />} />
+                <Route path='books' element={<BookList />}></Route>
               </Route>
             </Routes>
           </BrowserRouter>

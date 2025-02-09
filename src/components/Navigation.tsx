@@ -1,4 +1,6 @@
 import Home from '@mui/icons-material/Home';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import SettingsIcon from '@mui/icons-material/Settings';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -17,8 +19,11 @@ const Navigation = () => {
           <Button component={Link} to='/trainer' color='inherit'>
             <Home />
           </Button>
+          <Button component={Link} to='/trainer/books' color='inherit'>
+            <MenuBookIcon />
+          </Button>
           <Button component={Link} to='/trainer/admin' color='inherit'>
-            Admin
+            <SettingsIcon />
           </Button>
         </Toolbar>
       </AppBar>
