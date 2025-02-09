@@ -40,7 +40,7 @@ export const Admin = () => {
         noValidate
         component='form'
         onSubmit={handleSubmit}
-        sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}
+        sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}
       >
         <Typography variant='h6'>Github Configuration</Typography>
         <TextField
