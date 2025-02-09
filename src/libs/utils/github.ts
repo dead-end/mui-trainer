@@ -16,14 +16,24 @@ const b64_to_utf8 = (str: string) => {
 };
 
 /**
+ * The function returns a message from a response of a request that returns an error.
+ */
+const getErrorFromResponse = async (response: Response) => {
+  if (response.statusText) {
+    return response.statusText;
+  }
+  return response.text();
+};
+
+/**
  * The following properties are required for a PUT request to create or update
  * a file. If the file exists the sha of the file is required.
  */
-interface GithubPutBody {
+type TGithubPutBody = {
   content: string;
   message: string;
   sha?: string;
-}
+};
 
 export const githubGetUrl = (user: string, repo: string, path: string) => {
   return `https://api.github.com/repos/${user}/${repo}/contents/${path}`;
@@ -43,7 +53,7 @@ export const githubWriteContent = async (
   const result = new Result<void>();
 
   try {
-    const body: GithubPutBody = {
+    const body: TGithubPutBody = {
       content: utf8_to_b64(content),
       message: comment,
     };
@@ -161,14 +171,4 @@ export const githubGetHash = async (url: string, token: string) => {
   } catch (e) {
     return result.setError(`githubGetHash - Url: ${url} Error: ${e}`);
   }
-};
-
-/**
- * The function returns a message from a response of a request that returns an error.
- */
-const getErrorFromResponse = async (response: Response) => {
-  if (response.statusText) {
-    return response.statusText;
-  }
-  return response.text();
 };
