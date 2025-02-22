@@ -26,7 +26,7 @@ const initAndUpdate = (db: IDBDatabase) => {
 };
 
 /**
- * The function initialises the indexed db.
+ * The function initializes the indexed db.
  */
 export const dbInit = () => {
   return new Promise<IDBDatabase>((resolve, reject) => {
