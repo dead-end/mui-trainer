@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { TBook } from '../../libs/types';
-import { useConfigContext } from '../../libs/hooks/useConfigContext';
 import { bookListing } from '../../libs/model/book';
 import { Link } from 'react-router';
 import TableContainer from '@mui/material/TableContainer';
@@ -14,14 +13,18 @@ import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
+import { useGithubConfig } from '../../libs/hooks/github/useGithubConfig';
 
 const BookList = () => {
-  const { config } = useConfigContext();
+  const { githubConfig } = useGithubConfig();
   const [books, setBooks] = useState<TBook[]>([]);
 
   useEffect(() => {
     const load = async () => {
-      const result = await bookListing(config);
+      if (!githubConfig) {
+        throw new Error('Mistt!!!');
+      }
+      const result = await bookListing(githubConfig);
       if (result.isOk()) {
         setBooks(result.getValue());
       }
