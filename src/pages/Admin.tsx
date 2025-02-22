@@ -5,29 +5,29 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
-import { useConfigContext } from '../libs/hooks/useConfigContext';
 import { validateEmpty } from '../libs/utils/validation';
+import { useGithubConfig } from '../libs/hooks/GithubConfigProvider';
 
 export const Admin = () => {
-  const { config, setConfig } = useConfigContext();
+  const { githubConfig, updateGithubConfig } = useGithubConfig();
 
-  const [user, setUser] = useState(config.user);
+  const [user, setUser] = useState(githubConfig?.user || '');
   const [userError, setUserError] = useState('');
 
-  const [repo, setRepo] = useState(config.repo);
+  const [repo, setRepo] = useState(githubConfig?.repo || '');
   const [repoError, setRepoError] = useState('');
 
-  const [token, setToken] = useState(config.token);
+  const [token, setToken] = useState(githubConfig?.token || '');
   const [tokenError, setTokenError] = useState('');
 
-  const handleSubmit: React.FormEventHandler<HTMLFormElement> = (e) => {
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
 
     validateEmpty(user, setUserError);
     validateEmpty(repo, setRepoError);
     validateEmpty(token, setTokenError);
 
-    setConfig({
+    updateGithubConfig({
       user: user,
       repo: repo,
       token: token,
