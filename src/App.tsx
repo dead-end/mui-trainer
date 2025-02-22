@@ -5,7 +5,7 @@ import Navigation from './components/Navigation';
 import Container from '@mui/material/Container';
 import BookList from './pages/book/BookList';
 import BookCreate from './pages/book/BookCreate';
-import { GithubConfigProvider } from './libs/hooks/GithubConfigProvider';
+import { GithubConfigProvider } from './libs/hooks/github/GithubConfigProvider';
 
 function App() {
   return (

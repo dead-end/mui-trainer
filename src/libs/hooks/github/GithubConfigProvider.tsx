@@ -1,12 +1,8 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { TGithubConfig, TGithubConfigCtx } from '../types';
-import { githubGet, githubIsValid, githubPut } from '../model/github';
-import { Admin } from '../../pages/Admin';
-
-/**
- * Create the github config context.
- */
-const GithubConfigContext = createContext<TGithubConfigCtx | null>(null);
+import { useEffect, useState } from 'react';
+import { TGithubConfig } from '../../types';
+import { githubGet, githubIsValid, githubPut } from '../../model/github';
+import { Admin } from '../../../pages/Admin';
+import { GithubConfigContext } from './GithubConfigContext';
 
 export const GithubConfigProvider = ({
   children,
@@ -49,15 +45,4 @@ export const GithubConfigProvider = ({
       {githubIsValid(githubConfig) ? children : <Admin />}
     </GithubConfigContext.Provider>
   );
-};
-
-/**
- * Convenience function to get the github config context.
- */
-export const useGithubConfig = () => {
-  const ctx = useContext(GithubConfigContext);
-  if (ctx === null) {
-    throw new Error('Unable to get GithubConfigContext!');
-  }
-  return ctx;
 };
