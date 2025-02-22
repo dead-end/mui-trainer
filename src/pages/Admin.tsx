@@ -6,7 +6,7 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 import { validateEmpty } from '../libs/utils/validation';
-import { useGithubConfig } from '../libs/hooks/GithubConfigProvider';
+import { useGithubConfig } from '../libs/hooks/github/useGithubConfig';
 
 export const Admin = () => {
   const { githubConfig, updateGithubConfig } = useGithubConfig();
