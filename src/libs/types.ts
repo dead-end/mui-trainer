@@ -4,9 +4,9 @@ export type TGithubConfig = {
   token: string;
 };
 
-export type TConfigContext = {
-  config: TGithubConfig;
-  setConfig: (config: TGithubConfig) => void;
+export type TGithubConfigCtx = {
+  githubConfig: TGithubConfig | undefined;
+  updateGithubConfig: (config: TGithubConfig) => void;
 };
 
 export type TBook = {
