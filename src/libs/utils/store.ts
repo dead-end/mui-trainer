@@ -27,7 +27,7 @@ export const storeGet = <T>(store: IDBObjectStore, id: string) => {
 /**
  * The function writes an object to indexed db.
  */
-export const storePut = (store: IDBObjectStore, obj: any) => {
+export const storePut = <T>(store: IDBObjectStore, obj: T) => {
   return new Promise<void>((resolve, reject) => {
     const request = store.put(obj);
 
@@ -38,25 +38,6 @@ export const storePut = (store: IDBObjectStore, obj: any) => {
 
     request.onerror = (e) => {
       console.error(`Store: ${store.name} put: ${obj} error: ${e}`);
-      reject();
-    };
-  });
-};
-
-// with strict mode useless
-export const storeAdd = (store: IDBObjectStore, obj: any) => {
-  console.log('ADD-CALLED');
-
-  return new Promise<void>((resolve, reject) => {
-    const request = store.add(obj);
-
-    request.onsuccess = () => {
-      console.log('ADD', 'Store:', store.name, 'add:', obj);
-      resolve();
-    };
-
-    request.onerror = (e) => {
-      console.error(`Store: ${store.name} add: ${obj} error: ${e}`);
       reject();
     };
   });
