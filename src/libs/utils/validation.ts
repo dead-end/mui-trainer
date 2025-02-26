@@ -4,7 +4,8 @@ export const validateEmpty = (
 ) => {
   if (value === '') {
     setError('Please enter value!');
-  } else {
-    setError('');
+    return false;
   }
+  setError('');
+  return true;
 };
