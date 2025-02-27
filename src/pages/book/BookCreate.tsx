@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { validateEmpty } from '../../libs/utils/validation';
+import { validateEmpty, validateId } from '../../libs/utils/validation';
 import { Link, useNavigate } from 'react-router';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
@@ -28,6 +28,7 @@ const BookCreate = () => {
 
     if (
       !validateEmpty(id, setIdError) ||
+      !validateId(id, setIdError) ||
       !validateEmpty(title, setTitleError) ||
       !validateEmpty(desc, setDescError)
     ) {

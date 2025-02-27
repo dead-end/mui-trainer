@@ -9,3 +9,15 @@ export const validateEmpty = (
   setError('');
   return true;
 };
+
+export const validateId = (
+  value: string,
+  setError: (error: React.SetStateAction<string>) => void
+) => {
+  if (/^[-a-zA-Z0-9]*$/.test(value)) {
+    setError('');
+    return true;
+  }
+  setError('Not a valid id!');
+  return false;
+};
