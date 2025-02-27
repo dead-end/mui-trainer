@@ -28,6 +28,7 @@ export const Admin = () => {
     validateEmpty(token, setTokenError);
 
     updateGithubConfig({
+      id: 'github',
       user: user,
       repo: repo,
       token: token,
