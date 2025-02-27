@@ -59,4 +59,4 @@ export const dbInit = () => {
   });
 };
 
-export const db: IDBDatabase = await dbInit();
+export const db = dbInit();

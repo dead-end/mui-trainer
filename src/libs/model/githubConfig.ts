@@ -1,16 +1,15 @@
 import { TGithubConfig } from '../types';
-import { db } from '../utils/db';
-import { storeGet, storePut } from '../utils/store';
+import { storeGet, storePut, storeTx } from '../utils/store';
 
 const STORE = 'admin';
 
 export const githubConfigGet = async () => {
-  const store = db.transaction([STORE], 'readonly').objectStore(STORE);
+  const store = await storeTx(STORE, 'readonly');
   return storeGet<TGithubConfig>(store, 'github');
 };
 
 export const githubConfigPut = async (config: TGithubConfig) => {
-  const store = db.transaction([STORE], 'readwrite').objectStore(STORE);
+  const store = await storeTx(STORE, 'readwrite');
   return storePut<TGithubConfig>(store, config);
 };
 

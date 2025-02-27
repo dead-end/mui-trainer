@@ -1,3 +1,17 @@
+import { db } from './db';
+
+/**
+ * Function to get a store with a transaction.
+ */
+export const storeTx = async (
+  store: string,
+  mode: 'readonly' | 'readwrite',
+  stores?: string[]
+) => {
+  const s = stores ? stores : [store];
+  return (await db).transaction(s, mode).objectStore(store);
+};
+
 /**
  * The function reads an object from indexed db.
  */

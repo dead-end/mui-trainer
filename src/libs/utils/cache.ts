@@ -1,8 +1,7 @@
 import { TCache, TGithubConfig } from '../types';
-import { db } from './db';
 import { githubGetUrl, githubReadContent, githubWriteContent } from './github';
 import Result from './result';
-import { storeGet, storePut } from './store';
+import { storeGet, storePut, storeTx } from './store';
 
 const STORE = 'cache';
 
@@ -10,7 +9,7 @@ const STORE = 'cache';
  * Read a file from the cache.
  */
 const cacheGet = async <T>(path: string) => {
-  const store = db.transaction([STORE], 'readonly').objectStore(STORE);
+  const store = await storeTx(STORE, 'readonly');
   const result = await storeGet<TCache<T>>(store, path);
   if (result) {
     return result;
@@ -21,7 +20,7 @@ const cacheGet = async <T>(path: string) => {
  * Write a file to the cache.
  */
 const cachePut = async <T>(path: string, data: T, hash: string) => {
-  const store = db.transaction([STORE], 'readwrite').objectStore(STORE);
+  const store = await storeTx(STORE, 'readwrite');
   return storePut<TCache<T>>(store, {
     path,
     data,
