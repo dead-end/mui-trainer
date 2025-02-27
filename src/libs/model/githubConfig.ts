@@ -3,24 +3,18 @@ import { db } from '../utils/db';
 import { storeGet, storePut } from '../utils/store';
 
 const STORE = 'admin';
-const ID = 'github';
 
-export const githubGet = async () => {
+export const githubConfigGet = async () => {
   const store = db.transaction([STORE], 'readonly').objectStore(STORE);
-  return storeGet<TGithubConfig>(store, ID);
+  return storeGet<TGithubConfig>(store, 'github');
 };
 
-export const githubPut = async (config: TGithubConfig) => {
+export const githubConfigPut = async (config: TGithubConfig) => {
   const store = db.transaction([STORE], 'readwrite').objectStore(STORE);
-  return storePut(store, {
-    id: ID,
-    user: config.user,
-    repo: config.repo,
-    token: config.token,
-  });
+  return storePut<TGithubConfig>(store, config);
 };
 
-export const githubIsValid = (config: undefined | TGithubConfig) => {
+export const githubConfigIsValid = (config: undefined | TGithubConfig) => {
   if (config === undefined) {
     return false;
   }

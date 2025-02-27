@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { TGithubConfig } from '../../types';
-import { githubGet, githubIsValid, githubPut } from '../../model/github';
+import {
+  githubConfigGet,
+  githubConfigIsValid,
+  githubConfigPut,
+} from '../../model/githubConfig';
 import { Admin } from '../../../pages/Admin';
 import { GithubConfigContext } from './GithubConfigContext';
 
@@ -17,7 +21,7 @@ export const GithubConfigProvider = ({
   useEffect(() => {
     const load = async () => {
       if (githubConfig === undefined) {
-        const githubConfig = await githubGet();
+        const githubConfig = await githubConfigGet();
         if (!githubConfig) {
           throw new Error('Unable to to load github config!');
         }
@@ -33,7 +37,7 @@ export const GithubConfigProvider = ({
    * db and setting the state.
    */
   const updateGithubConfig = async (config: TGithubConfig) => {
-    await githubPut(config);
+    await githubConfigPut(config);
     setGithubConfig(config);
   };
 
@@ -42,7 +46,7 @@ export const GithubConfigProvider = ({
    */
   return (
     <GithubConfigContext.Provider value={{ githubConfig, updateGithubConfig }}>
-      {githubIsValid(githubConfig) ? children : <Admin />}
+      {githubConfigIsValid(githubConfig) ? children : <Admin />}
     </GithubConfigContext.Provider>
   );
 };
