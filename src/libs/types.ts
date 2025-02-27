@@ -1,4 +1,7 @@
+import Result from './utils/result';
+
 export type TGithubConfig = {
+  id: string;
   user: string;
   repo: string;
   token: string;
@@ -15,10 +18,19 @@ export type TBook = {
   description: string;
 };
 
+export type TBookUpdate = (books: TBook[]) => Result<TBook[]>;
+
 /**
  * The type for the content of a file with its hash value.
  */
+// TODO: used?
 export type TContentHash = {
   content: string;
+  hash: string;
+};
+
+export type TCache<T> = {
+  path: string;
+  data: T;
   hash: string;
 };
