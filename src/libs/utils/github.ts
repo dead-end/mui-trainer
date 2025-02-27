@@ -50,7 +50,7 @@ export const githubWriteContent = async (
   comment: string,
   token: string
 ) => {
-  const result = new Result<void>();
+  const result = new Result<string>();
 
   try {
     const body: TGithubPutBody = {
@@ -79,11 +79,13 @@ export const githubWriteContent = async (
         )}`
       );
     }
+
+    const json = await response.json();
+    console.log(json);
+    return result.setOk(json.content.sha);
   } catch (e) {
     return result.setError(`githubWriteContent - Url: ${url} Error: ${e}`);
   }
-
-  return result.setOk();
 };
 
 /**
