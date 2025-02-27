@@ -24,7 +24,12 @@ export type TBook = {
   description: string;
 };
 
-export type TBookUpdate = (books: TBook[]) => Result<TBook[]>;
+export type TChapter = {
+  id: string;
+  title: string;
+};
+
+export type TUpdater<T> = (current: T) => Result<T>;
 
 /**
  * The type for the content of a file with its hash value.

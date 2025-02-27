@@ -1,4 +1,4 @@
-import { TBook, TBookUpdate, TGithubConfig } from '../types';
+import { TBook, TGithubConfig, TUpdater } from '../types';
 import { cachedGetPath, cachePutPath } from '../utils/cache';
 import Result from '../utils/result';
 
@@ -39,10 +39,10 @@ export const bookGet = async (config: TGithubConfig, id: string) => {
 /**
  * The function updates the array of books.
  */
-const update = async (config: TGithubConfig, fct: TBookUpdate) => {
-  const result = new Result<TBook[]>();
+const update = async <T>(config: TGithubConfig, fct: TUpdater<T>) => {
+  const result = new Result<T>();
 
-  const cacheResult = await cachedGetPath<TBook[]>(config, PATH);
+  const cacheResult = await cachedGetPath<T>(config, PATH);
   if (cacheResult.hasError()) {
     return result.setError(cacheResult.getMessage());
   }
@@ -52,7 +52,7 @@ const update = async (config: TGithubConfig, fct: TBookUpdate) => {
     result.setError(fctResult.getMessage());
   }
 
-  return await cachePutPath<TBook[]>(
+  return await cachePutPath<T>(
     config,
     PATH,
     fctResult.getValue(),
@@ -65,7 +65,7 @@ const update = async (config: TGithubConfig, fct: TBookUpdate) => {
  * The function adds a book to the array and writes the result to the file.
  */
 export const bookCreate = async (config: TGithubConfig, book: TBook) => {
-  return update(config, (books) => {
+  return update<TBook[]>(config, (books) => {
     const result = new Result<TBook[]>();
     if (books.find((b) => b.id === book.id)) {
       return result.setError('Id already exists!');
@@ -79,7 +79,7 @@ export const bookCreate = async (config: TGithubConfig, book: TBook) => {
  * The function updates a book to the array and writes the result to the file.
  */
 export const bookUpdate = async (config: TGithubConfig, book: TBook) => {
-  return update(config, (books) => {
+  return update<TBook[]>(config, (books) => {
     const result = new Result<TBook[]>();
     const newBooks = books.filter((b) => b.id !== book.id);
     newBooks.push(book);
@@ -92,7 +92,7 @@ export const bookUpdate = async (config: TGithubConfig, book: TBook) => {
  * file.
  */
 export const bookDelete = async (config: TGithubConfig, id: string) => {
-  return update(config, (books) => {
+  return update<TBook[]>(config, (books) => {
     const result = new Result<TBook[]>();
     const len = books.length;
     books = books.filter((b) => b.id !== id);
