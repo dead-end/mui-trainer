@@ -6,10 +6,10 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import { useState } from 'react';
 import { validateEmpty } from '../libs/utils/validation';
-import { useGithubConfig } from '../libs/hooks/github/useGithubConfig';
+import { useGithubConfigContext } from '../libs/hooks/github/useGithubConfig';
 
 export const Admin = () => {
-  const { githubConfig, updateGithubConfig } = useGithubConfig();
+  const { githubConfig, updateGithubConfig } = useGithubConfigContext();
 
   const [user, setUser] = useState(githubConfig?.user || '');
   const [userError, setUserError] = useState('');
