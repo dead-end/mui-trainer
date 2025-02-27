@@ -12,6 +12,12 @@ export type TGithubConfigCtx = {
   updateGithubConfig: (config: TGithubConfig) => void;
 };
 
+export type TErrorCtx = {
+  error: string[];
+  addError: (msg: string) => void;
+  clearError: () => void;
+};
+
 export type TBook = {
   id: string;
   title: string;
