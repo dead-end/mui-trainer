@@ -30,7 +30,9 @@ const Error = () => {
       <DialogContent dividers>
         <List>{list}</List>
       </DialogContent>
-      <DialogActions sx={{ paddingX: 4, paddingY: 4 }}>
+      <DialogActions
+        sx={{ paddingX: 4, paddingY: 4, justifyContent: 'flex-start' }}
+      >
         <Button variant='contained' color='error' onClick={clearError}>
           Ok
         </Button>
