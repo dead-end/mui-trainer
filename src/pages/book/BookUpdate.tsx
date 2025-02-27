@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { validateEmpty } from '../../libs/utils/validation';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
@@ -8,14 +8,18 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useGithubConfig } from '../../libs/hooks/github/useGithubConfig';
-import { bookCreate } from '../../libs/model/book';
+import { bookGet, bookUpdate } from '../../libs/model/book';
+import { useError } from '../../libs/hooks/error/useError';
 
-const BookCreate = () => {
+const BookUpdate = () => {
+  type TParams = {
+    id: string;
+  };
+
   const githubConfig = useGithubConfig();
+  const { id } = useParams<TParams>();
   const navigate = useNavigate();
-
-  const [id, setId] = useState('');
-  const [idError, setIdError] = useState('');
+  const { addError } = useError();
 
   const [title, setTitle] = useState('');
   const [titleError, setTitleError] = useState('');
@@ -23,20 +27,37 @@ const BookCreate = () => {
   const [desc, setDesc] = useState('');
   const [descError, setDescError] = useState('');
 
+  useEffect(() => {
+    const load = async () => {
+      if (!id) {
+        addError('Id is not defined!');
+        return;
+      }
+      const result = await bookGet(githubConfig, id);
+      if (result.isOk()) {
+        const book = result.getValue();
+        setTitle(book.title);
+        setDesc(book.description);
+      }
+    };
+
+    load();
+  }, []);
+
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+    if (!githubConfig || !id) {
+      throw new Error('No github config!');
+    }
 
     if (
-      !validateEmpty(id, setIdError) ||
       !validateEmpty(title, setTitleError) ||
       !validateEmpty(desc, setDescError)
     ) {
       return;
     }
 
-    console.log('id', id, 'title', title, 'desc', desc);
-
-    await bookCreate(githubConfig, {
+    await bookUpdate(githubConfig, {
       id,
       title,
       description: desc,
@@ -53,19 +74,8 @@ const BookCreate = () => {
         onSubmit={handleSubmit}
         sx={{ display: 'flex', flexDirection: 'column', gap: 4 }}
       >
-        <Typography variant='h6'>Create Book</Typography>
-        <TextField
-          label='Id'
-          name='id'
-          value={id}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setId(e.target.value)
-          }
-          error={idError !== ''}
-          helperText={idError}
-          required
-          fullWidth
-        />
+        <Typography variant='h6'>Update Book</Typography>
+        <TextField label='Id' name='id' value={id} disabled fullWidth />
         <TextField
           label='Title'
           name='title'
@@ -105,4 +115,4 @@ const BookCreate = () => {
   );
 };
 
-export default BookCreate;
+export default BookUpdate;

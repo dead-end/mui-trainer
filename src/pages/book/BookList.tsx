@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { TBook } from '../../libs/types';
-import { bookListing } from '../../libs/model/book';
-import { Link } from 'react-router';
+import { bookDelete, bookListing } from '../../libs/model/book';
+import { Link, useNavigate } from 'react-router';
 import TableContainer from '@mui/material/TableContainer';
 import Table from '@mui/material/Table';
 import TableHead from '@mui/material/TableHead';
@@ -10,31 +10,47 @@ import TableCell from '@mui/material/TableCell';
 import TableBody from '@mui/material/TableBody';
 import Paper from '@mui/material/Paper';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
+import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { useGithubConfig } from '../../libs/hooks/github/useGithubConfig';
+import { useError } from '../../libs/hooks/error/useError';
 
 const BookList = () => {
-  const { githubConfig } = useGithubConfig();
+  const navigate = useNavigate();
+  const { addError } = useError();
+  const githubConfig = useGithubConfig();
   const [books, setBooks] = useState<TBook[]>([]);
 
   useEffect(() => {
     const load = async () => {
-      if (!githubConfig) {
-        throw new Error('Mistt!!!');
-      }
       const result = await bookListing(githubConfig);
       if (result.isOk()) {
         setBooks(result.getValue());
+      } else {
+        addError(result.getMessage());
       }
     };
 
     load();
   }, []);
 
-  const onDelete = () => {
-    console.log('delete');
+  const onDelete = async (id: string) => {
+    const result = await bookDelete(githubConfig, id);
+    if (result.getValue().length !== books.length) {
+      setBooks(result.getValue());
+    } else {
+      addError(result.getMessage());
+    }
+  };
+
+  const onUpdate = async (id: string) => {
+    if (!id) {
+      addError('No id!');
+      return;
+    }
+    navigate(`/trainer/books/update/${id}`);
   };
 
   return (
@@ -63,7 +79,10 @@ const BookList = () => {
                   <TableCell>{book.title}</TableCell>
                   <TableCell>{book.description}</TableCell>
                   <TableCell>
-                    <Button onClick={onDelete}>
+                    <Button onClick={() => onUpdate(book.id)}>
+                      <EditIcon />
+                    </Button>
+                    <Button onClick={() => onDelete(book.id)}>
                       <HighlightOffIcon />
                     </Button>
                   </TableCell>
