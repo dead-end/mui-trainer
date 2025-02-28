@@ -1,32 +1,15 @@
 import { TCache, TGithubConfig } from '../types';
-import { githubGetUrl, githubReadContent, githubWriteContent } from './github';
+import {
+  githubDelete,
+  githubGetHash,
+  githubGetUrl,
+  githubReadContent,
+  githubWriteContent,
+} from './github';
 import Result from './result';
-import { storeGet, storePut, storeTx } from './store';
+import { storeDel, storeGet, storePut, storeTx } from './store';
 
 const STORE = 'cache';
-
-/**
- * Read a file from the cache.
- */
-const cacheGet = async <T>(path: string) => {
-  const store = await storeTx(STORE, 'readonly');
-  const result = await storeGet<TCache<T>>(store, path);
-  if (result) {
-    return result;
-  }
-};
-
-/**
- * Write a file to the cache.
- */
-const cachePut = async <T>(path: string, data: T, hash: string) => {
-  const store = await storeTx(STORE, 'readwrite');
-  return storePut<TCache<T>>(store, {
-    path,
-    data,
-    hash,
-  });
-};
 
 /**
  * The function reads a path from the cache or from github.
@@ -34,28 +17,47 @@ const cachePut = async <T>(path: string, data: T, hash: string) => {
 export const cachedGetPath = async <T>(config: TGithubConfig, path: string) => {
   const result = new Result<TCache<T>>();
 
-  const cached = await cacheGet<T>(path);
-  if (cached) {
-    return result.setOk(cached);
+  //
+  // Get the file from the cache and return it if it exists.
+  //
+  const storeRead = await storeTx(STORE, 'readonly');
+  const data = await storeGet<TCache<T>>(storeRead, path);
+  if (data) {
+    return result.setOk(data);
   }
 
-  const readResult = await githubReadContent(
+  //
+  // Read the file from github.
+  //
+  const resultRead = await githubReadContent(
     githubGetUrl(config.user, config.repo, path),
     config.token
   );
-  if (readResult.hasError()) {
+  if (resultRead.hasError()) {
     return result.setError(
-      `cachedGetPath - unable to read data: ${readResult.getMessage()}`
+      `cachedGetPath - unable to read data: ${resultRead.getMessage()}`
     );
   }
 
+  //
+  // Create the result object.
+  //
   const cache: TCache<T> = {
     path,
-    data: JSON.parse(readResult.getValue().content),
-    hash: readResult.getValue().hash,
+    data: JSON.parse(resultRead.getValue().content),
+    hash: resultRead.getValue().hash,
   };
 
-  await cachePut<T>(cache.path, cache.data, cache.hash);
+  //
+  // Update the cache.
+  //
+  const storeWrite = await storeTx(STORE, 'readwrite');
+  await storePut<TCache<T>>(storeWrite, {
+    path: cache.path,
+    data: cache.data,
+    hash: cache.hash,
+  });
+
   return result.setOk(cache);
 };
 
@@ -66,22 +68,78 @@ export const cachePutPath = async <T>(
   config: TGithubConfig,
   path: string,
   data: T,
-  hash: string,
+  hash: string | void,
   comment: string
 ) => {
   const result = new Result<T>();
 
-  const writeResult = await githubWriteContent(
+  //
+  // Write the content to github.
+  //
+  const resultWrite = await githubWriteContent(
     githubGetUrl(config.user, config.repo, path),
     JSON.stringify(data),
     hash,
     comment,
     config.token
   );
-  if (writeResult.hasError()) {
-    return result.setError(writeResult.getMessage());
+  if (resultWrite.hasError()) {
+    return result.setError(resultWrite.getMessage());
   }
 
-  await cachePut<T>(path, data, writeResult.getValue());
+  //
+  // Update the cache.
+  //
+  const store = await storeTx(STORE, 'readwrite');
+  await storePut<TCache<T>>(store, {
+    path,
+    data,
+    hash: resultWrite.getValue(),
+  });
+
   return result.setOk(data);
+};
+
+/**
+ * The function deletes a file from gitbub and the cache.
+ */
+export const cacheDeletePath = async (
+  config: TGithubConfig,
+  path: string,
+  comment: string
+) => {
+  const result = new Result<void>();
+  const url = githubGetUrl(config.user, config.repo, path);
+
+  //
+  // Get the has value from github.
+  //
+  const resultHash = await githubGetHash(url, config.token);
+  if (resultHash.hasError()) {
+    return result.setError(resultHash.getMessage());
+  }
+
+  //
+  // If the hash exists, then delete the file on github.
+  // If the hash does not exist, then the file does not exist.
+  //
+  if (resultHash.getValue()) {
+    const resultDelete = await githubDelete(
+      url,
+      resultHash.getValue(),
+      comment,
+      config.token
+    );
+    if (resultDelete.hasError()) {
+      return result.setError(resultDelete.getMessage());
+    }
+  }
+
+  //
+  // Remove the file from the cache.
+  //
+  const store = await storeTx(STORE, 'readwrite');
+  await storeDel(store, path);
+
+  return result.setOk();
 };

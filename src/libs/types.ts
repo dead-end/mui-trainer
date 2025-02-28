@@ -1,5 +1,3 @@
-import Result from './utils/result';
-
 export type TGithubConfig = {
   id: string;
   user: string;
@@ -28,8 +26,6 @@ export type TChapter = {
   id: string;
   title: string;
 };
-
-export type TUpdater<T> = (current: T) => Result<T>;
 
 /**
  * The type for the content of a file with its hash value.
