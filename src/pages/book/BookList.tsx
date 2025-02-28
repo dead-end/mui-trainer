@@ -38,11 +38,10 @@ const BookList = () => {
 
   const onDelete = async (id: string) => {
     const result = await bookDelete(githubConfig, id);
-    if (result.getValue().length !== books.length) {
-      setBooks(result.getValue());
-    } else {
+    if (result.hasError()) {
       addError(result.getMessage());
     }
+    setBooks(result.getValue());
   };
 
   const onUpdate = async (id: string) => {
