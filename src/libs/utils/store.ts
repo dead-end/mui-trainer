@@ -56,3 +56,22 @@ export const storePut = <T>(store: IDBObjectStore, obj: T) => {
     };
   });
 };
+
+/**
+ * The function deletes an object from the indexed db.
+ */
+export const storeDel = (store: IDBObjectStore, id: IDBValidKey) => {
+  return new Promise<void>((resolve, reject) => {
+    const request = store.delete(id);
+
+    request.onsuccess = () => {
+      console.log('Store:', store.name, 'delete:', id);
+      resolve();
+    };
+
+    request.onerror = (e) => {
+      console.error(`Store: ${store.name} delete: ${id} error: ${e}`);
+      reject();
+    };
+  });
+};
