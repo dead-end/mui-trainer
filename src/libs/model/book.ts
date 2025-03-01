@@ -14,12 +14,12 @@ export const bookListing = async (config: TGithubConfig) => {
   //
   // Get the book list, from cache or from github.
   //
-  const cachedResult = await cachedGetPath<TBook[]>(config, PATH);
-  if (cachedResult.hasError()) {
-    return result.setError(cachedResult.getMessage());
+  const resCache = await cachedGetPath<TBook[]>(config, PATH);
+  if (resCache.hasError()) {
+    return result.setError(resCache);
   }
 
-  return result.setOk(cachedResult.getValue().data);
+  return result.setOk(resCache.getValue().data);
 };
 
 /**
@@ -31,15 +31,15 @@ export const bookGet = async (config: TGithubConfig, id: string) => {
   //
   // Get the book list, from cache or from github.
   //
-  const cachedResult = await cachedGetPath<TBook[]>(config, PATH);
-  if (cachedResult.hasError()) {
-    return result.setError(cachedResult.getMessage());
+  const resCache = await cachedGetPath<TBook[]>(config, PATH);
+  if (resCache.hasError()) {
+    return result.setError(resCache);
   }
 
   //
   // Search the book.
   //
-  const book = cachedResult.getValue().data.find((b) => b.id === id);
+  const book = resCache.getValue().data.find((b) => b.id === id);
   if (!book) {
     return result.setError(`Not found: ${id}`);
   }
@@ -55,15 +55,15 @@ export const bookCreate = async (config: TGithubConfig, book: TBook) => {
   //
   // Get the book list, from cache or from github.
   //
-  const resultCache = await cachedGetPath<TBook[]>(config, PATH);
-  if (resultCache.hasError()) {
-    return result.setError(resultCache.getMessage());
+  const resCache = await cachedGetPath<TBook[]>(config, PATH);
+  if (resCache.hasError()) {
+    return result.setError(resCache);
   }
 
   //
   // Add the new book to the list
   //
-  let books = resultCache.getValue().data;
+  let books = resCache.getValue().data;
   if (books.find((b) => b.id === book.id)) {
     return result.setError('Id already exists!');
   }
@@ -72,15 +72,15 @@ export const bookCreate = async (config: TGithubConfig, book: TBook) => {
   //
   // Write the new book list to github and update the cache.
   //
-  const resultPut = await cachePutPath<TBook[]>(
+  const resPut = await cachePutPath<TBook[]>(
     config,
     PATH,
     books,
-    resultCache.getValue().hash,
+    resCache.getValue().hash,
     `Adding book: ${book.id}`
   );
-  if (resultPut.hasError()) {
-    return result.setError(resultPut.getMessage());
+  if (resPut.hasError()) {
+    return result.setError(resPut);
   }
 
   //
@@ -90,9 +90,9 @@ export const bookCreate = async (config: TGithubConfig, book: TBook) => {
   // TODO: Why github funtion is used here?
   const path = `books/${book.id}/listing.chapters.json`;
   const url = githubGetUrl(config.user, config.repo, path);
-  const resultHash = await githubGetHash(url, config.token);
-  if (resultHash.hasError()) {
-    return result.setError(resultHash.getMessage());
+  const resHash = await githubGetHash(url, config.token);
+  if (resHash.hasError()) {
+    return result.setError(resHash);
   }
 
   //
@@ -102,11 +102,11 @@ export const bookCreate = async (config: TGithubConfig, book: TBook) => {
     config,
     path,
     [],
-    resultHash.getValue(),
+    resHash.getValue(),
     'Creating chapters!'
   );
   if (resultChap.hasError()) {
-    return result.setError(resultChap.getMessage());
+    return result.setError(resultChap);
   }
 
   return result;
@@ -121,15 +121,15 @@ export const bookUpdate = async (config: TGithubConfig, book: TBook) => {
   //
   // Get the book list, from cache or from github.
   //
-  const resultCache = await cachedGetPath<TBook[]>(config, PATH);
-  if (resultCache.hasError()) {
-    return result.setError(resultCache.getMessage());
+  const resCache = await cachedGetPath<TBook[]>(config, PATH);
+  if (resCache.hasError()) {
+    return result.setError(resCache);
   }
 
   //
   // Remove the book from the list and add the new version.
   //
-  let books = resultCache.getValue().data;
+  let books = resCache.getValue().data;
   books = books.filter((b) => b.id !== book.id);
   books.push(book);
 
@@ -140,7 +140,7 @@ export const bookUpdate = async (config: TGithubConfig, book: TBook) => {
     config,
     PATH,
     books,
-    resultCache.getValue().hash,
+    resCache.getValue().hash,
     `Updating book: ${book.id}`
   );
 };
@@ -155,15 +155,15 @@ export const bookDelete = async (config: TGithubConfig, id: string) => {
   //
   // Get the book list, from cache or from github.
   //
-  const resultCache = await cachedGetPath<TBook[]>(config, PATH);
-  if (resultCache.hasError()) {
-    return result.setError(resultCache.getMessage());
+  const resCache = await cachedGetPath<TBook[]>(config, PATH);
+  if (resCache.hasError()) {
+    return result.setError(resCache);
   }
 
   //
   // Remove the book from the list
   //
-  let books = resultCache.getValue().data;
+  let books = resCache.getValue().data;
   const len = books.length;
   books = books.filter((b) => b.id !== id);
   if (len === books.length) {
@@ -173,27 +173,27 @@ export const bookDelete = async (config: TGithubConfig, id: string) => {
   //
   // Write the new book list to github and update the cache.
   //
-  const resultPut = await cachePutPath<TBook[]>(
+  const resPut = await cachePutPath<TBook[]>(
     config,
     PATH,
     books,
-    resultCache.getValue().hash,
+    resCache.getValue().hash,
     `Deleting book ${id}`
   );
-  if (resultPut.hasError()) {
-    return result.setError(resultPut.getMessage());
+  if (resPut.hasError()) {
+    return result.setError(resPut);
   }
 
   //
   // Delete the chapter list of the book from github and from cache.
   //
-  const resultDelete = await cacheDeletePath(
+  const resDel = await cacheDeletePath(
     config,
     `books/${id}/listing.chapters.json`,
     `Deleting file.`
   );
-  if (resultDelete.hasError()) {
-    return result.setError(resultDelete.getMessage());
+  if (resDel.hasError()) {
+    return result.setError(resDel);
   }
 
   return result.setOk(books);
