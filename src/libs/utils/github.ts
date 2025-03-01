@@ -73,11 +73,8 @@ export const githubWriteContent = async (
 
     const response = await fetch(url, data);
     if (!response.ok) {
-      return result.setError(
-        `githubWriteContent - Url: ${url} Error: ${await getErrorFromResponse(
-          response
-        )}`
-      );
+      const e = await getErrorFromResponse(response);
+      return result.setError(`githubWriteContent - Url: ${url} Error: ${e}`);
     }
 
     const json = await response.json();
@@ -105,10 +102,9 @@ export const githubReadContent = async (url: string, token: string) => {
 
     const response = await fetch(url, headers);
     if (!response.ok) {
+      const e = await getErrorFromResponse(response);
       return result.setError(
-        `githubReadContent - Url: ${url} Read error: ${await getErrorFromResponse(
-          response
-        )}`
+        `githubReadContent - Url: ${url} Read error: ${e}`
       );
     }
 
@@ -152,11 +148,8 @@ export const githubGetHash = async (url: string, token: string) => {
     }
 
     if (!response.ok) {
-      return result.setError(
-        `githubGetHash - Url: ${url} Error: ${await getErrorFromResponse(
-          response
-        )}`
-      );
+      const e = await getErrorFromResponse(response);
+      return result.setError(`githubGetHash - Url: ${url} Error: ${e}`);
     }
 
     const etag = response.headers.get('ETag');
@@ -203,11 +196,8 @@ export const githubDelete = async (
 
     const response = await fetch(url, data);
     if (!response.ok) {
-      return result.setError(
-        `githubDelete - Url: ${url} Error: ${await getErrorFromResponse(
-          response
-        )}`
-      );
+      const e = await getErrorFromResponse(response);
+      return result.setError(`githubDelete - Url: ${url} Error: ${e}`);
     }
 
     console.log(`githubDelete - Url: ${url}`);

@@ -84,7 +84,7 @@ export const cachePutPath = async <T>(
     config.token
   );
   if (resultWrite.hasError()) {
-    return result.setError(resultWrite.getMessage());
+    return result.setError(resultWrite);
   }
 
   //
@@ -116,7 +116,7 @@ export const cacheDeletePath = async (
   //
   const resultHash = await githubGetHash(url, config.token);
   if (resultHash.hasError()) {
-    return result.setError(resultHash.getMessage());
+    return result.setError(resultHash);
   }
 
   //
@@ -131,7 +131,7 @@ export const cacheDeletePath = async (
       config.token
     );
     if (resultDelete.hasError()) {
-      return result.setError(resultDelete.getMessage());
+      return result.setError(resultDelete);
     }
   }
 
