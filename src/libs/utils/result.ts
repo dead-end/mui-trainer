@@ -91,9 +91,17 @@ export default class Result<V> {
   /**
    * The function sets an error message and the status and returns the object.
    */
-  public setError(message: string) {
+  public setError(data: string | Result<any>) {
+    if (data instanceof Result) {
+      if (!data.hasError()) {
+        throw new Error('Result has not an error!');
+      }
+      this.message = data.message;
+    } else {
+      this.message = data;
+    }
+
     this.status = ResultStatus.ERROR;
-    this.message = message;
     return this;
   }
 }
