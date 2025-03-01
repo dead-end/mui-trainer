@@ -32,8 +32,7 @@ export const storeGet = <T>(store: IDBObjectStore, id: string) => {
     };
 
     request.onerror = (e) => {
-      console.error(`Store: ${store.name} id: ${id} storeGet error: ${e}`);
-      reject();
+      reject(`Store: ${store.name} id: ${id} storeGet error: ${e}`);
     };
   });
 };
@@ -51,8 +50,7 @@ export const storePut = <T>(store: IDBObjectStore, obj: T) => {
     };
 
     request.onerror = (e) => {
-      console.error(`Store: ${store.name} put: ${obj} error: ${e}`);
-      reject();
+      reject(`Store: ${store.name} put: ${obj} error: ${e}`);
     };
   });
 };
@@ -70,8 +68,7 @@ export const storeDel = (store: IDBObjectStore, id: IDBValidKey) => {
     };
 
     request.onerror = (e) => {
-      console.error(`Store: ${store.name} delete: ${id} error: ${e}`);
-      reject();
+      reject(`Store: ${store.name} delete: ${id} error: ${e}`);
     };
   });
 };
