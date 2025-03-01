@@ -174,3 +174,45 @@ export const githubGetHash = async (url: string, token: string) => {
     return result.setError(`githubGetHash - Url: ${url} Error: ${e}`);
   }
 };
+
+/**
+ * The function deletes a file from github.
+ */
+export const githubDelete = async (
+  url: string,
+  hash: string | void,
+  comment: string,
+  token: string
+) => {
+  const result = new Result<void>();
+
+  try {
+    const body = {
+      message: comment,
+      sha: hash,
+    };
+
+    const data = {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/vnd.github.v3+json',
+        authorization: `token ${token}`,
+      },
+      body: JSON.stringify(body),
+    };
+
+    const response = await fetch(url, data);
+    if (!response.ok) {
+      return result.setError(
+        `githubDelete - Url: ${url} Error: ${await getErrorFromResponse(
+          response
+        )}`
+      );
+    }
+
+    console.log(`githubDelete - Url: ${url}`);
+    return result.setOk();
+  } catch (e) {
+    return result.setError(`githubDelete - Url: ${url} Error: ${e}`);
+  }
+};
