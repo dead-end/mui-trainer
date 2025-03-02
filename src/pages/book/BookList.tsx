@@ -18,6 +18,8 @@ import { useGithubConfig } from '../../libs/hooks/github/useGithubConfig';
 import { useError } from '../../libs/hooks/error/useError';
 import IconButton from '@mui/material/IconButton';
 import Tooltip from '@mui/material/Tooltip';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
+import Typography from '@mui/material/Typography';
 
 const BookList = () => {
   const navigate = useNavigate();
@@ -53,8 +55,12 @@ const BookList = () => {
     setBooks(result.getValue());
   };
 
-  const onUpdate = async (id: string) => {
+  const onUpdate = (id: string) => {
     navigate(`/trainer/books/update/${id}`);
+  };
+
+  const onShow = (id: string) => {
+    navigate(`/trainer/book/${id}/chapters`);
   };
 
   return (
@@ -66,6 +72,7 @@ const BookList = () => {
           gap: 4,
         }}
       >
+        <Typography variant='h6'>Book List</Typography>
         <TableContainer>
           <Table sx={{ minWidth: 650 }} aria-label='simple table'>
             <TableHead color='primary'>
@@ -99,6 +106,15 @@ const BookList = () => {
                         onClick={() => onDelete(book.id)}
                       >
                         <HighlightOffIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title={`Show chapters: ${book.id}`}>
+                      <IconButton
+                        color='primary'
+                        loading={loading}
+                        onClick={() => onShow(book.id)}
+                      >
+                        <FormatListBulletedIcon />
                       </IconButton>
                     </Tooltip>
                   </TableCell>
