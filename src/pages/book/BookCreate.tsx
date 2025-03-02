@@ -9,10 +9,12 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useGithubConfig } from '../../libs/hooks/github/useGithubConfig';
 import { bookCreate } from '../../libs/model/book';
+import { useError } from '../../libs/hooks/error/useError';
 
 const BookCreate = () => {
   const githubConfig = useGithubConfig();
   const navigate = useNavigate();
+  const { addError } = useError();
 
   const [id, setId] = useState('');
   const [idError, setIdError] = useState('');
@@ -22,6 +24,8 @@ const BookCreate = () => {
 
   const [desc, setDesc] = useState('');
   const [descError, setDescError] = useState('');
+
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
@@ -35,13 +39,18 @@ const BookCreate = () => {
       return;
     }
 
-    console.log('id', id, 'title', title, 'desc', desc);
-
-    await bookCreate(githubConfig, {
+    setLoading(true);
+    const result = await bookCreate(githubConfig, {
       id,
       title,
       description: desc,
     });
+    setLoading(false);
+
+    if (result.hasError()) {
+      addError(result.getMessage());
+      return;
+    }
 
     navigate('/trainer/books');
   };
@@ -97,7 +106,7 @@ const BookCreate = () => {
           <Button variant='contained' component={Link} to='/trainer/books'>
             Cancel
           </Button>
-          <Button type='submit' variant='contained'>
+          <Button type='submit' variant='contained' loading={loading}>
             Submit
           </Button>
         </Stack>

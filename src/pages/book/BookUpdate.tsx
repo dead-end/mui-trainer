@@ -27,6 +27,8 @@ const BookUpdate = () => {
   const [desc, setDesc] = useState('');
   const [descError, setDescError] = useState('');
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const load = async () => {
       if (!id) {
@@ -38,7 +40,10 @@ const BookUpdate = () => {
         const book = result.getValue();
         setTitle(book.title);
         setDesc(book.description);
+      } else {
+        addError(result.getMessage());
       }
+      setLoading(false);
     };
 
     load();
@@ -57,11 +62,18 @@ const BookUpdate = () => {
       return;
     }
 
-    await bookUpdate(githubConfig, {
+    setLoading(true);
+    const result = await bookUpdate(githubConfig, {
       id,
       title,
       description: desc,
     });
+    setLoading(false);
+
+    if (result.hasError()) {
+      addError(result.getMessage());
+      return;
+    }
 
     navigate('/trainer/books');
   };
@@ -106,7 +118,7 @@ const BookUpdate = () => {
           <Button variant='contained' component={Link} to='/trainer/books'>
             Cancel
           </Button>
-          <Button type='submit' variant='contained'>
+          <Button type='submit' variant='contained' loading={loading}>
             Submit
           </Button>
         </Stack>

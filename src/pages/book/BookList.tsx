@@ -16,12 +16,15 @@ import Box from '@mui/material/Box';
 import Stack from '@mui/material/Stack';
 import { useGithubConfig } from '../../libs/hooks/github/useGithubConfig';
 import { useError } from '../../libs/hooks/error/useError';
+import IconButton from '@mui/material/IconButton';
+import Tooltip from '@mui/material/Tooltip';
 
 const BookList = () => {
   const navigate = useNavigate();
   const { addError } = useError();
   const githubConfig = useGithubConfig();
   const [books, setBooks] = useState<TBook[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const load = async () => {
@@ -31,24 +34,26 @@ const BookList = () => {
       } else {
         addError(result.getMessage());
       }
+      setLoading(false);
     };
 
     load();
   }, []);
 
   const onDelete = async (id: string) => {
+    setLoading(true);
     const result = await bookDelete(githubConfig, id);
+    setLoading(false);
+
     if (result.hasError()) {
       addError(result.getMessage());
+      return;
     }
+
     setBooks(result.getValue());
   };
 
   const onUpdate = async (id: string) => {
-    if (!id) {
-      addError('No id!');
-      return;
-    }
     navigate(`/trainer/books/update/${id}`);
   };
 
@@ -78,12 +83,24 @@ const BookList = () => {
                   <TableCell>{book.title}</TableCell>
                   <TableCell>{book.description}</TableCell>
                   <TableCell>
-                    <Button onClick={() => onUpdate(book.id)}>
-                      <EditIcon />
-                    </Button>
-                    <Button onClick={() => onDelete(book.id)}>
-                      <HighlightOffIcon />
-                    </Button>
+                    <Tooltip title={`Edit book: ${book.id}`}>
+                      <IconButton
+                        color='primary'
+                        loading={loading}
+                        onClick={() => onUpdate(book.id)}
+                      >
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title={`Delete book: ${book.id}`}>
+                      <IconButton
+                        color='primary'
+                        loading={loading}
+                        onClick={() => onDelete(book.id)}
+                      >
+                        <HighlightOffIcon />
+                      </IconButton>
+                    </Tooltip>
                   </TableCell>
                 </TableRow>
               ))}
@@ -95,6 +112,7 @@ const BookList = () => {
             Cancel
           </Button>
           <Button
+            loading={loading}
             variant='contained'
             component={Link}
             to='/trainer/books/create'
