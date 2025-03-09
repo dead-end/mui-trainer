@@ -104,7 +104,7 @@ const ChapterUpdate = () => {
           <Button
             variant='contained'
             component={Link}
-            to={toChapterList(bookId ? bookId : '')}
+            to={toChapterList(bookId)}
           >
             Cancel
           </Button>
