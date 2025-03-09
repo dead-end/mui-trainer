@@ -109,7 +109,7 @@ export const bookCreate = async (config: TGithubConfig, book: TBook) => {
     return result.setError(resultChap);
   }
 
-  return result;
+  return result.setOk(resPut.getValue());
 };
 
 /**

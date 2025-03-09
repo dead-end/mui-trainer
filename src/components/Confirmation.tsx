@@ -8,29 +8,30 @@ import DialogTitle from '@mui/material/DialogTitle';
 type TProps<T> = {
   title: string;
   message: string;
-  confirm: T | undefined;
-  setConfirm: React.Dispatch<React.SetStateAction<T | undefined>>;
-  confirmFct: () => void;
+  confirmValue: T | undefined;
+  setConfirmValue: React.Dispatch<React.SetStateAction<T | undefined>>;
+  confirmFct: (value: T) => Promise<void>;
 };
 
 const Confirmation = <T,>({
   title,
   message,
-  confirm,
-  setConfirm,
+  confirmValue: confirmValue,
+  setConfirmValue: setConfirmValue,
   confirmFct,
 }: TProps<T>) => {
   const onOk = () => {
-    confirmFct();
-    setConfirm(undefined);
+    if (confirmValue) {
+      confirmFct(confirmValue).then(() => setConfirmValue(undefined));
+    }
   };
 
   const onCancel = () => {
-    setConfirm(undefined);
+    setConfirmValue(undefined);
   };
 
   return (
-    <Dialog open={confirm !== undefined}>
+    <Dialog open={confirmValue !== undefined}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText>{message}</DialogContentText>
