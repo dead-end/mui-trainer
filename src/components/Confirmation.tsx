@@ -5,32 +5,32 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 
-type TProps = {
+type TProps<T> = {
   title: string;
   message: string;
-  confirm: boolean;
-  setConfirm: React.Dispatch<React.SetStateAction<boolean>>;
+  confirm: T | undefined;
+  setConfirm: React.Dispatch<React.SetStateAction<T | undefined>>;
   confirmFct: () => void;
 };
 
-const Confirmation = ({
+const Confirmation = <T,>({
   title,
   message,
   confirm,
   setConfirm,
   confirmFct,
-}: TProps) => {
+}: TProps<T>) => {
   const onOk = () => {
     confirmFct();
-    setConfirm(false);
+    setConfirm(undefined);
   };
 
   const onCancel = () => {
-    setConfirm(false);
+    setConfirm(undefined);
   };
 
   return (
-    <Dialog open={confirm}>
+    <Dialog open={confirm !== undefined}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <DialogContentText>{message}</DialogContentText>
