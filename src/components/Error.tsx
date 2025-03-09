@@ -1,5 +1,4 @@
 import { useError } from '../libs/hooks/error/useError';
-import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -9,6 +8,8 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
+import DialogContentText from '@mui/material/DialogContentText';
+import ListItemText from '@mui/material/ListItemText';
 
 const Error = () => {
   const { error, clearError } = useError();
@@ -18,22 +19,19 @@ const Error = () => {
       <ListItemIcon>
         <ErrorIcon color='error' />
       </ListItemIcon>
-      <Typography variant='body1'>{e}</Typography>
+      <ListItemText>{e}</ListItemText>
     </ListItem>
   ));
 
   return (
     <Dialog open={error.length > 0}>
-      <DialogTitle sx={{ paddingX: 4, paddingY: 4 }} color='error'>
-        Errors
-      </DialogTitle>
-      <DialogContent dividers>
+      <DialogTitle color='error'>Error</DialogTitle>
+      <DialogContent>
+        <DialogContentText>List of errors found so far!</DialogContentText>
         <List>{list}</List>
       </DialogContent>
-      <DialogActions
-        sx={{ paddingX: 4, paddingY: 4, justifyContent: 'flex-start' }}
-      >
-        <Button variant='contained' color='error' onClick={clearError}>
+      <DialogActions>
+        <Button color='error' onClick={clearError}>
           Ok
         </Button>
       </DialogActions>
